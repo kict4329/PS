@@ -12,21 +12,7 @@ vector<string> ans;
 vector<int> adj[20001];
 bool c[20001];
 int colors[20001];
-
-bool isBipartite()
-{
-	for (int i = 1; i < v; i++)
-	{
-		int curColor = colors[i];
-
-		for (int j = 0; j < adj[i].size(); j++)
-		{
-			if (curColor == colors[adj[i][j]])
-				return false;
-		}
-	}
-	return true;
-}
+bool Bipartite = true;
 
 void dfs(int s, int color)
 {
@@ -39,6 +25,11 @@ void dfs(int s, int color)
 
 		for (unsigned int i = 0; i < adj[s].size(); i++)
 		{
+			if (colors[adj[s][i]] == color)
+			{
+				Bipartite = false;
+				return;
+			}
 			dfs(adj[s][i], -color);
 		}
 	}
@@ -51,7 +42,6 @@ int main()
 	for (int i = 0; i < k; i++)
 	{
 		cin >> v >> e;
-
 		for (int j = 0; j < e; j++)
 		{
 			int a, b;
@@ -62,19 +52,26 @@ int main()
 
 		for (int j = 1; j <= v; j++)
 		{
+			if (!Bipartite)
+				break;
+
 			if (!c[j])
 				dfs(j, RED);
 		}
 
-		if (isBipartite())
-			cout << "YES" << "\n";
+		if (Bipartite)
+			ans.push_back("YES");
 		else
-			cout << "NO" << "\n";
+			ans.push_back("NO");
 
 		memset(c, false, sizeof(c));
 		memset(adj, 0, sizeof(adj));
 		memset(colors, 0, sizeof(colors));
+		Bipartite = true;
 	}
+
+	for (int i = 0; i < k; i++)
+		cout << ans[i] << "\n";
 
 	return 0;
 }
